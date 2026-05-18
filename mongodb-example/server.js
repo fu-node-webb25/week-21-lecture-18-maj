@@ -23,8 +23,7 @@ app.use('/api/movies', movieRouter);
 database.on('error', (error) => console.log(error));
 database.once('connected', () => {
     console.log('Database connected');
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 })
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
