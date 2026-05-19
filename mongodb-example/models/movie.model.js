@@ -13,7 +13,7 @@ const movieSchema = new Schema({
     },
     genre : {
         type : String,
-        requireed : true
+        required : true
     }
 }, { timestamps : true });
 

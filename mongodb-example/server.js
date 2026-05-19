@@ -19,7 +19,6 @@ app.use(express.json());
 app.use('/api/movies', movieRouter);
 
 // Server
-
 database.on('error', (error) => console.log(error));
 database.once('connected', () => {
     console.log('Database connected');
