@@ -8,8 +8,6 @@ router.use(authenticateKey);
 
 // POST register user
 router.post('/register', async (req, res, next) => {
-    console.log('tjoo');
-    
     const user = req.body;
     if(!user) {
         next({
@@ -51,7 +49,6 @@ router.post('/login', async (req, res, next) => {
     if(result.success) {
         if(result.user.password === user.password) {
             global.user = result.user;
-            console.log(global.user);
             
             res.json({
                 success : true,

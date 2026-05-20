@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticateKey, authorizePost, authorizeUser } from '../middlewares/auth.middleware.js';
-import { getPosts, getPostsByUserId, addPost, updatePost, deletePost } from '../services/posts.service.js';
+import { getPosts, getPostsByUserId, addPost, updatePost, deletePost, getPostById } from '../services/posts.service.js';
+import { addComment, getCommentsByPostId } from '../services/comments.service.js';
 
 const router = Router();
 
@@ -40,6 +41,35 @@ router.get('/:userId', async (req, res, next) => {
     }
 });
 
+// GET comments by postId
+router.get('/:postId/comments', async (req, res, next) => {
+    const { postId } = req.params;
+
+    const postResult = await getPostById(postId);
+    if(!postResult.success) {
+        next({
+            status : 404,
+            message : postResult.message
+        });
+    }
+    const commentResult = await getCommentsByPostId(postId);
+
+    if(commentResult.success) {
+        res.json({
+            success :true,
+            post : {
+                ...postResult.post._doc,
+                comments : commentResult.comments
+            }
+        });
+    } else {
+        next({
+            status : 404,
+            message : commentResult.message
+        });
+    }
+});
+
 // POST new post
 router.post('/', authorizeUser, async (req, res, next) => {
     const post = req.body;
@@ -65,6 +95,38 @@ router.post('/', authorizeUser, async (req, res, next) => {
     } else {
         next({
             status : 404,
+            message : result.message
+        });
+    }
+});
+
+// POST new comment
+router.post('/:postId/comments', authorizeUser, async (req, res, next) => {
+    const { postId } = req.params;
+    const comment = req.body;
+    if(!comment) {
+        next({
+            status : 400,
+            message : 'No request body provided'
+        });
+    }
+
+    const result = await addComment({
+        commentId : crypto.randomUUID().substring(0, 5),
+        postId,
+        ...comment,
+        userId : global.user.userId,
+        author : global.user.username
+    });
+
+    if(result.success) {
+        res.status(201).json({
+            success : true,
+            comment : result.comment
+        });
+    } else {
+        next({
+            status : 400,
             message : result.message
         });
     }

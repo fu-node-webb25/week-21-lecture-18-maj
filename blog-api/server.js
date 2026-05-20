@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import keysRouter from './routes/keys.route.js';
 import authRouter from './routes/auth.route.js';
 import postsRouter from './routes/posts.route.js';
+import commentsRouter from './routes/comments.route.js';
 import { errorHandler } from './middlewares/errorHandler.middleware.js';
 
 // Config
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/api/keys', keysRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postsRouter);
+app.use('/api/comments', commentsRouter);
 
 // Database
 database.on('error', (error) => console.log(error));
